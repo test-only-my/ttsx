@@ -1,0 +1,43 @@
+{% extends 'top_bottom_father.html' %}
+{% block b1 %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>天天生鲜-购物车</title>
+	<link rel="stylesheet" type="text/css" href="/static/css/reset.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+</head>
+<body>
+{% block head %}
+    {{ block.super }}
+{% endblock head %}
+
+    {% block logo_search1 %}
+	<div class="search_bar clearfix">
+		<a href="../index.html" class="logo fl"><img src="/static/images/logo.png"></a>
+		<div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;购物车</div>
+		<div class="search_con fr">
+			<input type="text" class="input_text fl" name="" placeholder="搜索商品">
+			<input type="button" class="input_btn fr" name="" value="搜索">
+		</div>
+	</div>
+    {% endblock logo_search1 %}
+
+    {% block logo_search2 %}
+        <div class="search_bar clearfix">
+            <a href="../index.html" class="logo fl"><img src="/static/images/logo.png"></a>
+            <div class="search_con fl">
+                <input type="text" class="input_text fl" name="" placeholder="搜索商品">
+                <input type="button" class="input_btn fr" name="" value="搜索">
+            </div>
+            <div class="guest_cart fr">
+                <a href="../cart/cart.html" class="cart_name fl">我的购物车</a>
+                <div class="goods_count fl" id="show_count">1</div>
+            </div>
+	    </div>
+    {% endblock logo_search2 %}
+
+{% endblock b1 %}
+</body>
+</html>
