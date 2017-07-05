@@ -48,8 +48,17 @@ $(function(){
 		}
 		else
 		{
-			$('#user_name').next().hide();
-			error_name = false;
+			$.get('/register_again/',{'user_name':$('#user_name').val()},function (data) {
+				if(data.valible == 1){
+					//用户名已存在
+					$('#user_name').next().html('用户名已存在')
+					error_name = true
+				}else{
+					//用户名未被注册
+					$('#user_name').next().hide();
+					error_name = false;
+					}
+            })
 		}
 	}
 
