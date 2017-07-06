@@ -8,8 +8,13 @@ from hashlib import sha1
 # Create your views here.
 from django.utils.timezone import now
 
-from user.models import UserInfo
+from user.models import UserInfo, ReceiverInfo
 
+# 装饰器，用来判断是否已经登录，验证在登录后的状态才能显示的页面
+def islogin(request):
+    id=request.session.get['uid']
+    if id is None:
+        return redirect('/login/')
 
 # 首页
 def index(request):
@@ -83,33 +88,13 @@ def register_check(request):
 
 # 登录页面展示
 def login(request):
-    # 如果cookie中有值，进入login页面，直接拿到显示在页面上
-
+    # 如果cookie中有值，进入login页面，直接拿到显示在登录页面上
     uname = request.COOKIES.get('uname')
     if uname is None:
         uname = ''
     # head为0,不显示顶栏,logo_search为0,不显示logo和搜索框
     context = {'title': '登录', 'head': 0, 'logo_search': 0, 'uname': uname}
     return render(request, 'user/login.html', context)
-
-# 个人信息页面
-def user_center_info(request):
-    user = UserInfo.objects.filter(id=request.session.get('uid'))
-    context = {'title': '用户中心', 'head': 1, 'user': user[0]}
-    return render(request, 'user/user_center_info.html', context)
-
-# 收货地址页面
-def user_center_site(request):
-    # head为0,不显示顶栏;logo_search为0,不显示logo和搜索框,1为搜索框在中间，2为搜索框在右边
-    context = {'title': '用户中心', 'head': 1, 'logo_search': 2}
-    return render(request, 'user/user_center_site.html', context)
-
-def user_center_order(request):
-    context = {'title':'全部订单'}
-    return render(request,'order/user_center_order.html',context)
-
-
-
 
 # 登录校验
 def login_check(request):
@@ -158,12 +143,51 @@ def login_check(request):
         context['error_name'] = '请输入用户名'
         return render(request, 'user/login.html', context)
 
-        # username:a
-        # pwd:11111111
-        # login_submit:登录
+# 个人信息页面
+@islogin
+def user_center_info(request):
+    user = UserInfo.objects.filter(id=request.session.get('uid'))
+    context = {'title': '用户中心', 'head': 1, 'user': user[0]}
+    return render(request, 'user/user_center_info.html', context)
+
+# 收货地址页面
+@islogin
+def user_center_site(request):
+    # head为0,不显示顶栏;logo_search为0,不显示logo和搜索框,1为搜索框在中间，2为搜索框在右边
+    user = UserInfo.objects.filter(id=request.session.get('uid'))
+    receives = ReceiverInfo.objects.filter(user_belong=user[0])  # 获取当前用户的收件人信息
+    context = {'title': '用户中心', 'head': 1, 'logo_search': 2,'receives':receives}
+    return render(request, 'user/user_center_site.html', context)
+
+# 添加收件人信息
+@islogin
+def add_receive(request):
+    # 获取当前用户，列表形式
+    user = UserInfo.objects.filter(id=request.session.get('uid'))
+    # 获取页面传的值
+    args = request.POST
+    name = args.get('name')
+    detail_address = args.get('detail_address')
+    post_code = args.get('post_code')
+    tel = args.get('tel')
+    # 创建一个对象，添加收件人地址
+    receive = ReceiverInfo()
+    receive.name = name
+    receive.post_code = post_code
+    receive.detail_address = detail_address
+    receive.tel = tel
+    receive.user_belong = user[0]
+    receive.save()
+    # return render(request,'user/user_center_site.html')
+    return redirect('/user_center_site/')
+@islogin
+def user_center_order(request):
+    context = {'title':'用户中心','head':1,'logo_search':2}
+    return render(request,'order/user_center_order.html',context)
 
 
 # cart购物车模块
+@islogin
 def cart(request):
     # head为0,不显示顶栏
     context = {}
@@ -172,6 +196,7 @@ def cart(request):
 
 
 # goods商品模块
+@islogin
 def detail(request):
     # head为0,不显示顶栏
     context = {}
@@ -180,6 +205,7 @@ def detail(request):
 
 
 # 商品列表页
+@islogin
 def list(request):
     # head为0,不显示顶栏
     context = {}
