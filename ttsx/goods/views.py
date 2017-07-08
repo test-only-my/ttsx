@@ -1,4 +1,6 @@
 # coding=utf-8
+from django.core.paginator import Paginator
+from django.db.models import Q
 from django.shortcuts import render
 
 # Create your views here.
@@ -19,5 +21,38 @@ def index(request):
     context = {'title': '首页', 'head': 1, 'logo_search': 1,'list_dic':list_dic,'type_list':type_list}
     return render(request, 'index.html', context)
 
-def list(request):
-    return render(request,'list.html')
+def list(request,tid,pIndex):
+    t = GoodType.objects.filter(pk=int(tid))[0]
+    # 根据index页面地址栏传过来的type的id，查出这个类型的商品
+    # 最新两个商品
+    new_list = GoodInfo.objects.filter(gtype=int(tid.decode('utf8'))).order_by('-id')[0:2]
+    # 全部这个类型的商品，按id倒序排序
+    all_list = GoodInfo.objects.filter(gtype=int(tid.decode('utf8'))).order_by('-id')
+    # 分页显示，每页15个
+    p = Paginator(all_list,15)
+    # 返回页码列表
+    index_list = p.page_range
+    # 当前页码
+    # pIndex = p.page(pIndex).number
+    # 获取当前页的数据,表示要拿第几页
+    now_page = p.page(int(pIndex.decode('utf8')))
+
+
+    context = {'logo_search':1,'t':t,
+               'new_list':new_list,'now_page':now_page,
+               'index_list':index_list}
+    return render(request,'list.html',context)
+
+def detail(request,tid,gid):
+    # print(tid,gid)
+    t = GoodType.objects.filter(id=int(tid))
+    # 根据id去查找要显示详情的商品
+    good = GoodInfo.objects.filter(Q(id=int(gid)) & Q(gtype=int(tid)))
+    if good:
+        # 最新商品推荐展示两个
+        new_list = GoodInfo.objects.filter(gtype=int(tid.decode('utf8'))).order_by('-id')[0:2]
+
+        context = {'head':1,'logo_search':1,'t':t[0],'good':good[0],'new_list':new_list}
+        return render(request,'detail.html',context)
+    else:
+        return render(request, '404.html')

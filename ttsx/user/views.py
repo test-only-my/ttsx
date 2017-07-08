@@ -103,8 +103,8 @@ def login_check(request):
                 context['uname'] = uname
                 return render(request, 'login.html', context)
             else:
-                if request.session.get('url_path') is None:
-                    response = redirect('/user/index/')  # request.session['url_path']
+                if not request.session.has_key('url_path'):
+                    response = redirect('/goods/index/')  # request.session['url_path']
                 else:
                     response = redirect(request.session.get('url_path'))
                 # 取登录后的用户存储session，用于登录后的显示

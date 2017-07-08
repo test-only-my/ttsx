@@ -3,22 +3,7 @@
     {% block title %}<title>
         天天生鲜-{{ title }}</title>
     	<script type="text/javascript" src="/static/js/slide.js"></script>
-	    <script type="text/javascript">
-		BCSlideshow('focuspic');
-		var oFruit = document.getElementById('fruit_more');
-		var oShownum = document.getElementById('show_count');
 
-		var hasorder = localStorage.getItem('order_finish');
-
-		if(hasorder)
-		{
-			oShownum.innerHTML = '2';
-		}
-
-		oFruit.onclick = function(){
-			window.location.href = 'list.html';
-		}
-	</script>
     {% endblock title %}
 
 	{% block body %}
@@ -37,9 +22,9 @@
 
 	<div class="center_con clearfix">
 		<ul class="subnav fl">
-{#            {% for t in type_list %}#}
-{#                <li><a href="#model0{{ forloop.counter }}" class="fruit">{{ t.tname }}</a></li>#}
-{#            {% endfor %}#}
+            {% for t in type_list %}
+                <li><a href="#model0{{ forloop.counter }}" class="fruit">{{ t.tname }}</a></li>
+            {% endfor %}
 			<li><a href="#model01" class="fruit">新鲜水果</a></li>
 			<li><a href="#model02" class="seafood">海鲜水产</a></li>
 			<li><a href="#model03" class="meet">猪牛羊肉</a></li>
@@ -81,7 +66,7 @@
 {#				<a href="#">加州提子</a>#}
 {#				<a href="#">亚马逊牛油果</a>#}
 			</div>
-			<a href="{% url 'goods:list' %}" class="goods_more fr" id="fruit_more">查看更多 ></a>
+			<a href="{% url 'goods:list' tid=l.t.id pIndex=1 %}" class="goods_more fr" id="fruit_more">查看更多 ></a>
 		</div>
 
 
@@ -102,6 +87,21 @@
 	</div>
 
 {% endfor %}
+	    <script type="text/javascript">
+		BCSlideshow('focuspic');
+		var oFruit = document.getElementById('fruit_more');
+		var oShownum = document.getElementById('show_count');
 
+		var hasorder = localStorage.getItem('order_finish');
+
+		if(hasorder)
+		{
+			oShownum.innerHTML = '2';
+		}
+
+		oFruit.onclick = function(){
+			window.location.href = 'list.html';
+		}
+	</script>
 {% endblock body %}
 
