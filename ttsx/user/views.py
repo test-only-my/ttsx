@@ -9,6 +9,7 @@ from hashlib import sha1
 from django.utils.timezone import now
 
 import decorator
+from goods.models import GoodInfo
 from user.models import UserInfo, ReceiverInfo
 
 # user用户模块
@@ -137,8 +138,22 @@ def logout(request):
 # 个人信息页面
 @decorator.islogin
 def user_center_info(request):
-    # user = UserInfo.objects.filter(id=request.session.get('uid'))
-    context = {'title': '用户中心', 'head': 1}
+    goods = []
+    if request.COOKIES.has_key('see_goods'):
+        see_goods = request.COOKIES['see_goods']
+        see_list = see_goods.split("|")
+        see_reverse = see_list.reverse()
+        for see in see_reverse:
+            see_good = GoodInfo.objects.filter(id=int(see))
+            goods.append(see_good)
+        if len(goods)<5:
+            pass
+        else:
+            goods=goods[0:5]
+    else:
+        pass
+    user = UserInfo.objects.filter(id=request.session.get('uid'))
+    context = {'title': '用户中心', 'head': 1,'logo_search':2,'user':user[0],'goods':goods}
     return render(request, 'user_center_info.html', context)
 # 收货地址页面
 @decorator.islogin

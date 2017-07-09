@@ -23,16 +23,41 @@
                 });
             })
 
-
+        $('.num_show').blur(function () {
+            re1 = '[1-9]*'
+            flag1 = re1.test($('.num_show').val());
+            if(flag1) {
+                num = parseInt($('.num_show').val());
+                if(num>=parseInt($('#stock').val())){
+                    num = $('#stock').val()
+                }else if(num<=1){
+                    num = 1
+                }
+                total_prize = (num * {{ good.gprice }}).toFixed(2);
+                $('.num_show').val(num);
+                $('.total em').text(total_prize+'元');
+            }else{
+                $('.num_show').val(1)
+            }
+        })
         $('.add').click(function () {
             num = parseInt($('.num_show').val());
-            if(num==$())
-            num++;
+                if(num>=parseInt($('#stock').val())){
+                    num = $('#stock').val()
+                }else {
+                    num++;
+                }
+            total_prize = (num * {{ good.gprice }}).toFixed(2);
             $('.num_show').val(num);
+            $('.total em').text(total_prize+'元');
         });
         $('.minus').click(function () {
             num = parseInt($('.num_show').val());
-            num--;
+            if(num<=1){
+                num=1;
+            }else {
+                num--;
+            }
             $('.num_show').val(num);
         });
         })
@@ -61,7 +86,7 @@
 			</div>
 			<div class="goods_num clearfix">
 				<div class="num_name fl">数 量：</div>
-                <input type="hidden" id="stock">
+                <input type="hidden" id="stock" value="{{ good.gstock }}">
 				<div class="num_add fl">
 					<input type="text" class="num_show fl" value="1">
 					<a href="javascript:;" class="add fr">+</a>
