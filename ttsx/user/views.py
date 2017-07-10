@@ -139,19 +139,13 @@ def logout(request):
 @decorator.islogin
 def user_center_info(request):
     goods = []
-    if request.COOKIES.has_key('see_goods'):
-        see_goods = request.COOKIES['see_goods']
-        see_list = see_goods.split("|")
-        see_reverse = see_list.reverse()
-        for see in see_reverse:
-            see_good = GoodInfo.objects.filter(id=int(see))
+    # 取出cookie中的浏览记录，如果不存在，默认值为空，也不会报错
+    see_goods = request.COOKIES.get('see_goods','').split(",")  # 最后一个分割出来的是空‘’
+    # 遍历分割好的列表，如果存在该商品，记录到另一个列表中，不存在就什么也不做
+    for see in see_goods:
+        if see:
+            see_good = GoodInfo.objects.get(id=int(see))
             goods.append(see_good)
-        if len(goods)<5:
-            pass
-        else:
-            goods=goods[0:5]
-    else:
-        pass
     user = UserInfo.objects.filter(id=request.session.get('uid'))
     context = {'title': '用户中心', 'head': 1,'logo_search':2,'user':user[0],'goods':goods}
     return render(request, 'user_center_info.html', context)
@@ -199,15 +193,6 @@ def cart(request):
     return render(request, 'cart.html', context)
 
 
-# goods商品模块
-def detail(request):
-    # head为0,不显示顶栏
-    context = {'head':1,'logo_search':1}
-    return render(request, 'detail.html', context)
-# 商品列表页
-def list(request):
-    # head为0,不显示顶栏
-    context = {'head':1}
-    return render(request, 'list.html', context)
+
 
 

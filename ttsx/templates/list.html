@@ -13,9 +13,10 @@
 {% block right %}
 		<div class="r_wrap fr clearfix">
 			<div class="sort_bar">
-				<a href="#" class="active">默认</a>
-				<a href="#">价格</a>
-				<a href="#">人气</a>
+{#            {% url 'goods:list' tid=t.id pIndex=now_page.number kind=0 %}#}
+				<a href="?kind=0" {% if kind == '0' %}class="active"{% endif %}>默认</a>
+				<a href="?kind=1&order={{ order|default:1 }}" {% if kind == '1' %}class="active"{% endif %}>价格</a>
+				<a href="?kind=2&order={{ order|default:1 }}" {% if kind == '2' %}class="active"{% endif %}>人气</a>
 			</div>
 
 			<ul class="goods_type_list clearfix">
@@ -34,7 +35,13 @@
 
 			<div class="pagenation">
             {% if now_page.has_previous %}
+                <a href="{% url 'goods:list' tid=t.id pIndex=1 %}">首页</a>
 				<a href="{% url 'goods:list' tid=t.id pIndex=now_page.number|add:-1 %}"><上一页</a>
+            {% endif %}
+            {% if p.num_pages > 5 %}
+                {% if index_list.4 > 5 %}
+                        <a href="">...</a>
+                {% endif %}
             {% endif %}
                 {% for i in index_list %}
                     {% if i == now_page.number %}
@@ -43,8 +50,14 @@
                         <a href="{% url 'goods:list' tid=t.id pIndex=i %}">{{ i }}</a>
                     {% endif %}
                 {% endfor %}
+            {% if p.num_pages > 5 %}
+                {% if p.num_pages|add:-1 > index_list.4 %}
+                    <a href="">...</a>
+                {% endif %}
+            {% endif %}
             {% if now_page.has_next %}
 				<a href="{% url 'goods:list' tid=t.id pIndex=now_page.number|add:1 %}">下一页></a>
+                <a href="{% url 'goods:list' tid=t.id pIndex=p.num_pages %}">末页</a>
             {% endif %}
 			</div>
 		</div>
