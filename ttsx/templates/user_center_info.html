@@ -27,8 +27,9 @@
 					<ul class="goods_type_list clearfix">
                         {% for see in goods %}
                             <li>
-                                <a href="{% url 'user:detail' %}"><img src="/static/{{ see.gimg }}/"></a>
-                                <h4><a href="{% url 'user:detail' %}">{{ see.gname }}</a></h4>
+{#                            {% url 'user:detail' tid=t.id gid=good.id%}#}
+                                <a href=""><img src="/static/{{ see.gimg }}/"></a>
+                                <h4><a href="">{{ see.gname }}</a></h4>
                                 <div class="operate">
                                     <span class="prize">￥{{ see.gprice }}</span>
                                     <span class="unit">{{ see.gprice }}/{{ see.gunit }}</span>

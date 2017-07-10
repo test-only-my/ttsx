@@ -25,7 +25,9 @@
 	</div>
     {% block list_title %}{% endblock list_title %}
 
+
     <div class="main_wrap clearfix">
+{% block left %}
 		<div class="l_wrap fl clearfix">
 			<div class="new_goods">
 				<h3>新品推荐</h3>
@@ -40,6 +42,8 @@
 				</ul>
 			</div>
 		</div>
+{% endblock left %}
     {% block right %}{% endblock right %}
     </div>
+
 {% endblock body %}

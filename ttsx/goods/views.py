@@ -80,9 +80,6 @@ def detail(request,tid,gid):
     # 根据id去查找要显示详情的商品
     good = GoodInfo.objects.filter(Q(id=int(gid)) & Q(gtype=int(tid)))
     if good:
-        # 每点击一次进入详情页，点击量就+1
-        good[0].gclick += 1
-        good[0].save()
         # 最新商品推荐展示两个
         new_list = GoodInfo.objects.filter(gtype=int(tid.decode('utf8'))).order_by('-id')[0:2]
         context = {'head':1,'logo_search':1,'t':t[0],'good':good[0],'new_list':new_list}
@@ -99,6 +96,13 @@ def detail(request,tid,gid):
         if len(see_goods)>5:
             see_goods.pop()
         response.set_cookie('see_goods',','.join(see_goods))
+        # 每点击一次进入详情页，点击量就+1
+        good[0].gclick = int(good[0].gclick)+1
+        good[0].save()
         return response
     else:
         return render(request, '404.html')
+
+
+def search(request):
+    return render(request,'search/search.html')
