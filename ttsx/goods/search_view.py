@@ -6,7 +6,6 @@ from haystack.generic_views import SearchView
 class MySearchView(SearchView):
     """My custom search view."""
     def get_context_data(self, *args, **kwargs):
-        print('------------------------')
         context = super(MySearchView, self).get_context_data(*args, **kwargs)
         # do something
         page_obj = context['page_obj']

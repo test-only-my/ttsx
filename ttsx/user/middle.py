@@ -10,6 +10,7 @@ class Media:
             '/user/login/',
             '/user/login_check/',
             '/user/logout/',
+            '/cart/islogin/',
         ]:
-            print('--------url匹配之前--------')
+            # print('--------url匹配之前--------')
             request.session['url_path'] = request.get_full_path()

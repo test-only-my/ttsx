@@ -185,13 +185,6 @@ def user_center_order(request):
     return render(request, 'user_center_order.html', context)
 
 
-# cart购物车模块
-@decorator.islogin
-def cart(request):
-    # head为0,不显示顶栏
-    context = {'head':1,'logo_search':2}
-    return render(request, 'cart.html', context)
-
 
 
 

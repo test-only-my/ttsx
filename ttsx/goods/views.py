@@ -68,7 +68,7 @@ def list(request,tid,pIndex):
         index_list = [now_page.number-2,now_page.number-1,now_page.number,now_page.number+1,now_page.number+2]
         # index_list.insert(0, '...')
         # index_list.append('...')
-    context = {'head':1,'logo_search':1,'t':t,
+    context = {'title':'商品列表','head':1,'logo_search':1,'t':t,
                'new_list':new_list,'now_page':now_page,'p':p,'kind':kind,'order':order,
                'index_list':index_list}
     return render(request,'list.html',context)
