@@ -38,30 +38,30 @@
 {#        {%endfor%}#}
 
 			<div class="pagenation">
-            {% if now_page.has_previous %}
+            {% if page_obj.has_previous %}
                 <a href="?q={{query}}&amp;page=1">首页</a>&nbsp;&nbsp;
-                <a href="?q={{query}}&amp;page={{pindex|add:-1}}"><上一页</a>&nbsp;&nbsp;
+                <a href="?q={{query}}&amp;page={{page_obj.number|add:-1}}"><上一页</a>&nbsp;&nbsp;
             {% endif %}
-            {% if p.num_pages > 5 %}
+            {% if page_obj.paginator.num_pages > 5 %}
                 {% if index_list.4 > 5 %}
                         <a href="">...</a>
                 {% endif %}
             {% endif %}
                 {% for i in index_list %}
-                    {% if i == now_page.number %}
+                    {% if i == page_obj.number %}
                         <a href="?q={{query}}&amp;page={{i}}" class="active">{{ i }}</a>
                     {% else %}
                         <a href="?q={{query}}&amp;page={{i}}">{{ i }}</a>
                     {% endif %}
                 {% endfor %}
-            {% if p.num_pages > 5 %}
-                {% if p.num_pages|add:-1 > index_list.4 %}
+            {% if page_obj.paginator.num_pages > 5 %}
+                {% if page_obj.paginator.num_pages|add:-1 > index_list.4 %}
                     <a href="">...</a>
                 {% endif %}
             {% endif %}
-            {% if now_page.has_next %}
-				<a href="?q={{query}}&amp;page={{pindex|add:1}}">下一页></a>
-                <a href="?q={{query}}&amp;page={{page.paginator.page_range}}">末页</a>
+            {% if page_obj.has_next %}
+				<a href="?q={{query}}&amp;page={{page_obj.number|add:1}}">下一页></a>
+                <a href="?q={{query}}&amp;page={{page_obj.paginator.num_pages}}">末页</a>
             {% endif %}
 			</div>
 		</div>

@@ -19,11 +19,11 @@ def index(request):
         new_goods = t.goodinfo_set.order_by('-id')[0:4]  # 最新的商品
         list_dic.append({'top_goods':top_goods,'new_goods':new_goods,'t':t})  # 将两个列表分别存在字典里，每个键对应一个列表
 
-    context = {'title': '首页', 'head': 1, 'logo_search': 1,'list_dic':list_dic,'type_list':type_list}
+    context = {'title': '首页', 'head': 1, 'logo_search': 1,'list_dic':list_dic,'type_list':type_list,'kind1':str(0)}
     return render(request, 'index.html', context)
 
 def list(request,tid,pIndex):
-    kind = request.GET.get('kind')
+    kind = request.GET.get('kind','0')
     order = request.GET.get('order','1')
     t = GoodType.objects.filter(pk=int(tid))[0]
     # 根据index页面地址栏传过来的type的id，查出这个类型的商品
@@ -103,6 +103,3 @@ def detail(request,tid,gid):
     else:
         return render(request, '404.html')
 
-
-def search(request):
-    return render(request,'search/search.html')
