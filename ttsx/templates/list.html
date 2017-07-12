@@ -27,7 +27,7 @@
 					<div class="operate">
 						<span class="prize">￥{{ good.gprice }}</span>
 						<span class="unit">{{ good.gprice }}/{{ good.gunit }}</span>
-						<a href="javascript:add_cart({{ good.id }});" class="add_goods" title="加入购物车"></a>
+						<a href="javascript:add_cart1({{ good.id }});" class="add_goods" id='add_cart' title="加入购物车"></a>
 					</div>
 				</li>
                 {% endfor %}
@@ -61,13 +61,35 @@
             {% endif %}
 			</div>
 		</div>
+        <div class="add_jump"></div>
+
     <script>
-    function add_cart(gid) {
+    function add_cart1(gid) {
         $.get('/cart/islogin/',function (data) {
             if(data.flag1){//已经登录
-                $.get('/cart/add/',{'gid':gid},function () {
+{#                添加的函数#}
+                $.get('/cart/add/',{'gid':gid},function (data) {
                     if(data.result){//添加成功
-                        $('#show_count').text(int($('#show_count').text)+=data.gcount)
+                        {#              播放添加购物车的动画#}
+                        var $add_x = $('#add_cart').offset().top;
+                        var $add_y = $('#add_cart').offset().left;
+
+                        var $to_x = $('#show_count').offset().top;
+                        var $to_y = $('#show_count').offset().left;
+
+
+                        $('#add_cart').click(function(){
+                            $(".add_jump").css({'left':$add_y,'top':$add_x,'display':'block'});
+                            $(".add_jump").stop().animate({
+                                'left': $to_y+7,
+                                'top': $to_x+7},
+                                "fast", function() {
+                                    $(".add_jump").fadeOut('fast',function(){
+                                        var cart_all = $('#show_count').text();
+                                        $('#show_count').html(parseInt(cart_all)+data.gcount);
+                                    });
+                            });
+                        })
                     }else{//添加失败
                         alert('添加失败');
                     }
@@ -77,9 +99,7 @@
             }
         });
     }
-{#    $('.add_goods').click(function (data) {#}
-{#        data#}
-{#    })#}
+
     </script>
 {% endblock right %}
 
