@@ -8,7 +8,9 @@ from django.http import JsonResponse
 # Create your views here.
 @decorator.islogin
 def cart(request):
-    context = {'title':'购物车','head':1,'logo_search':2}
+    uid = int(request.session.get('uid'))
+    cart_goods = CartInfo.objects.filter(cuser_id=uid)
+    context = {'title':'购物车','head':1,'logo_search':2,'cart_goods':cart_goods}
     return render(request,'cart.html',context)
 
 # 加入购物车之前，判断是否已经登录
@@ -47,3 +49,25 @@ def count1(request):
     # 因为聚合函数返回的是字典样式{"ccount__sum": 60}，并不是个值，所以需要get取出来
     sum_count = CartInfo.objects.filter(cuser_id=uid).aggregate(Sum('ccount')).get('ccount__sum')
     return JsonResponse({'sum_count':sum_count})
+
+def save_count(request):
+    try:
+        id = int(request.GET.get('id'))
+        num = int(request.GET.get('num'))
+        cart = CartInfo.objects.get(pk=id)
+        cart.ccount = num
+        cart.save()
+        context = {'ok': 1}
+    except:
+        context = {'ok':0}
+    return JsonResponse(context)
+
+def del_cart(request):
+    try:
+        id = int(request.GET.get('id'))
+        cart = CartInfo.objects.get(pk=id)
+        cart.delete()
+        context = {'ok':1}
+    except:
+        context = {'ok':0}
+    return JsonResponse(context)

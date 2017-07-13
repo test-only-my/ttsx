@@ -1,7 +1,99 @@
 {% extends 'father.html' %}
-{% block title %}<title>天天生鲜-{{ title }}</title>{% endblock title %}
+{% block title %}<title>天天生鲜-{{ title }}</title>
+
+{% endblock title %}
 
 {% block body %}
+    <script>
+    $(function () {
+        function sum_price() {
+            var sum_all = 0;
+            $('.cart_list_td').each(function () {
+                var num = parseInt($(this).find('.num_show').val());
+                var price = parseFloat($(this).children('.col05').text());
+                sum_one = num * price;
+                if($(this).find(':checkbox').prop('checked')) {
+                    sum_all += sum_one;
+                }
+                $(this).children('.col07').text(sum_one.toFixed(2)+'元');
+            });
+            $('#sum_all').text(sum_all.toFixed(2)+'元');
+            count = $('.cart_list_td').length;
+            $('.total_count em').text(count);
+            $('.settlements b').text($(':checked').not('#check_all').length);
+        }
+        sum_price();
+
+        $('.num_show').blur(function () {
+            var num = parseInt($(this).val());
+            if(!isNaN(num)) {
+                if(num>=parseInt($(this).parents('.cart_list_td').find('.stock').val())){
+                    num = $(this).parents('.cart_list_td').find('.stock').val();
+                }else if(num<=1){
+                    num = 1;
+                }
+                count = $(this);
+                count.val(num);
+                id = $(this).parents('.cart_list_td').prop('id');
+                $.get('/cart/save_count/',{'id':id,'num':num},function (data) {
+                    if(data.ok!=1){
+                        count.val(1);
+                    }
+                });
+            }else{
+                $(this).val(1);
+            }
+            sum_price();
+        });
+        $('.add').click(function () {
+            var num = parseInt($(this).parents('.cart_list_td').find('.num_show').val());
+            var stock = parseInt($(this).parents('.cart_list_td').find('.stock').val());
+            if(num>=stock){
+                num = stock;
+            }else {
+                num++;
+            }
+            $(this).parents('.cart_list_td').find('.num_show').val(num);
+            $(this).parents('.cart_list_td').find('.num_show').blur();
+        });
+        $('.minus').click(function () {
+            var num = parseInt($(this).parents('.cart_list_td').find('.num_show').val());
+            if(num<=1){
+                num=1;
+            }else {
+                num--;
+            }
+            $(this).parents('.cart_list_td').find('.num_show').val(num);
+            $(this).parents('.cart_list_td').find('.num_show').blur();
+        });
+
+        $('#check_all').click(function () {
+            ischecked = $(this).prop('checked');
+            $(':checkbox').not('#check_all').prop('checked',ischecked);
+            sum_price();
+        });
+        $(':checkbox').not('#check_all').click(function () {
+            //选中的个数和所有的个数作比较，排除全选按钮，相等则说明全选中了
+            if($(':checked').not('#check_all').length==$(':checkbox').not('#check_all').length){
+                $('#check_all').prop('checked',true);
+            }else{
+                $('#check_all').prop('checked',false);
+            }
+            sum_price();
+        });
+
+        $('.col08').click(function () {
+            id = $(this).parents('.cart_list_td').prop('id');
+            if(confirm('确认要删除吗？')){
+                $.get('/cart/del_cart/',{'id':id},function (data) {
+                if(data.ok==1){$('#'+id).remove();}
+                else{alert('删除失败')}
+                });
+            }
+
+        })
+    });
+    </script>
 	<div class="total_count">全部商品<em>2</em>件</div>	
 	<ul class="cart_list_th clearfix">
 		<li class="col01">商品名称</li>
@@ -11,45 +103,34 @@
 		<li class="col05">小计</li>
 		<li class="col06">操作</li>
 	</ul>
-	<ul class="cart_list_td clearfix">
-		<li class="col01"><input type="checkbox" name="" checked></li>
-		<li class="col02"><img src="/static/images/goods/goods012.jpg"></li>
-		<li class="col03">奇异果<br><em>25.80元/500g</em></li>
-		<li class="col04">500g</li>
-		<li class="col05">25.80元</li>
+    <form method="post" action="/order/place_order/">
+    {% csrf_token %}
+    {% for cart_good in cart_goods %}
+	<ul class="cart_list_td clearfix" id="{{ cart_good.id }}">
+		<li class="col01"><input type="checkbox" name="ischose" class="{{ cart_good.id }}" checked="checked"></li>
+		<li class="col02"><img src="/static/{{ cart_good.cgood.gimg }}"></li>
+        <input type="hidden" class="stock" value="{{ cart_good.cgood.gstock }}">
+		<li class="col03">{{ cart_good.cgood.gname }}<br><em>{{ cart_good.cgood.gprice }}元/{{ cart_good.cgood.gunit }}</em></li>
+		<li class="col04">{{ cart_good.cgood.gunit }}</li>
+		<li class="col05">{{ cart_good.cgood.gprice }}</li>
 		<li class="col06">
 			<div class="num_add">
 				<a href="javascript:;" class="add fl">+</a>
-				<input type="text" class="num_show fl" value="1">	
+				<input type="text" class="num_show fl" value="{{ cart_good.ccount }}">
 				<a href="javascript:;" class="minus fl">-</a>	
 			</div>
 		</li>
-		<li class="col07">25.80元</li>
+		<li class="col07"></li>
 		<li class="col08"><a href="javascript:;">删除</a></li>
 	</ul>
+    {% endfor %}
 
-	<ul class="cart_list_td clearfix">
-		<li class="col01"><input type="checkbox" name="" checked></li>
-		<li class="col02"><img src="/static/images/goods/goods003.jpg"></li>
-		<li class="col03">大兴大棚草莓<br><em>16.80元/500g</em></li>
-		<li class="col04">500g</li>
-		<li class="col05">16.80元</li>
-		<li class="col06">
-			<div class="num_add">
-				<a href="javascript:;" class="add fl">+</a>
-				<input type="text" class="num_show fl" value="1">	
-				<a href="javascript:;" class="minus fl">-</a>	
-			</div>
-		</li>
-		<li class="col07">16.80元</li>
-		<li class="col08"><a href="javascript:;">删除</a></li>
-	</ul>
-	
 
 	<ul class="settlements">
-		<li class="col01"><input type="checkbox" name="" checked=""></li>
+		<li class="col01"><input type="checkbox" name="" id="check_all" checked="checked"></li>
 		<li class="col02">全选</li>
-		<li class="col03">合计(不含运费)：<span>¥</span><em>42.60</em><br>共计<b>2</b>件商品</li>
-		<li class="col04"><a href="place_order.html">去结算</a></li>
+		<li class="col03">合计(不含运费)：<span>¥</span><em id="sum_all">总计</em><br>共计<b>2</b>件商品</li>
+		<li class="col04"><input type="submit" value="去结算"></li>
 	</ul>
+    </form>
 {% endblock body %}

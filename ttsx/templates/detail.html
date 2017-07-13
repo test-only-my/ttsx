@@ -131,7 +131,9 @@
             }else {
                 num--;
             }
+            total_prize = (num * {{ good.gprice }}).toFixed(2);
             $('.num_show').val(num);
+            $('.total em').text(total_prize+'元');
         });
         })
 
